@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative 'flags'
+require_relative 'xrandr'
+
+# Main script for `brightniss`
+class Script
+  include Flags
+
+  def initialize
+    @flags = ARGV.filter { |arg| arg.start_with? '-' }
+    @brightness_level = if reset_brightness_flag?
+                          1
+                        else
+                          ARGV.first.to_f / 100
+                        end
+    display_help! if user_needs_help?
+
+    @monitor = Xrandr.monitor
+    @interval = user_interval || 5
+  end
+
+  def run
+    adjust_brightness
+    return if once_only_flag?
+
+    loop do
+      sleep @interval
+      adjust_brightness if Xrandr.current_brightness != @brightness_level
+    end
+  end
+
+  private
+
+  def adjust_brightness
+    puts "Adjusting brightness to #{(@brightness_level * 100).to_i}"
+    Xrandr.adjust_brightness monitor: @monitor,
+                             brightness: @brightness_level
+  end
+
+  def user_needs_help?
+    # Brightness level is set to 0.0 if args are not provided or placed incorrectly
+    help_flag? || @brightness_level.zero?
+  end
+
+  def display_help!
+    puts 'Brightniss v0.1'
+    exit
+  end
+end
+
+Script.new.run
