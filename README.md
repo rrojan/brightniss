@@ -20,7 +20,7 @@ chmod +x brightniss
 ```
 
 Alternatively, you can add an alias for the script so you can run it from anywhere in your terminal by adding
-`alias brightniss="<path-to-your-brightniss-repo>/brightniss"` to your `~/.bashrc` or `~/.bash_aliases`
+`alias brightniss="<path-to-your-brightniss-repo>/brightniss"` to your bashrc or bash_aliases
 
 ### Flags and advanced usage
 
